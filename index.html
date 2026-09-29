@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MNHS ICT/CSS ENROLLMENT</title>
+    <link rel="stylesheet" href="../styles/style.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>MNHS ICT/CSS ENROLLMENT</h1>
+    </header>
+
+    <main>
+
+        <form id="enrollmentForm">
+
+            <input
+                type="file"
+                id="picture"
+                name="picture"
+                accept="image/*"
+                required
+            >
+            <br>
+
+            <input
+                type="text"
+                id="LRN"
+                name="LRN"
+                placeholder="LRN"
+                required
+            >
+            <br>
+
+            <input
+                type="text"
+                id="FirstName"
+                name="FirstName"
+                placeholder="First Name"
+                required
+            >
+            <br>
+
+            <input
+                type="text"
+                id="MiddleName"
+                name="MiddleName"
+                placeholder="Middle Name"
+                required
+            >
+            <br>
+
+            <input
+                type="text"
+                id="LastName"
+                name="LastName"
+                placeholder="Last Name"
+                required
+            >
+            <br>
+
+            <input
+                type="text"
+                id="section"
+                name="section"
+                placeholder="Section"
+                required
+            >
+            <br>
+
+            <label for="birthday">Birthday:</label>
+
+            <input
+                type="date"
+                id="birthday"
+                name="birthday"
+                required
+            >
+            <br>
+
+            <input
+                type="text"
+                id="adviser"
+                name="adviser"
+                placeholder="Adviser"
+                required
+            >
+            <br>
+
+            <input type="submit" value="Submit">
+
+        </form>
+
+        <p id="message"></p>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2023 MNHS ICT/CSS ENROLLMENT. All rights reserved.</p>
+    </footer>
+
+
+    <script src="../script/script.js"></script>
+
+</body>
+
+
+</html>
