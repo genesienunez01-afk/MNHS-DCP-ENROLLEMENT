@@ -2,7 +2,7 @@ const form = document.getElementById("enrollmentForm");
 const message = document.getElementById("message");
 
 // PUT YOUR GOOGLE APPS SCRIPT WEB APP URL HERE
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbytrXRDVfpPcD4NLWH7fv8C3wGsUEA2EOrX5G4VcE-2KH8tYEBGZYyIYMPM7MGltmW4/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_9FjlZOKH2NVpKGWJvlS09C9xqldWTpmsPZy9k_y4BmriNaSWMwLivUjxgCF72YzFtw/exec";
 
 
 form.addEventListener("submit", async function (event) {
