@@ -50,6 +50,10 @@ form.addEventListener("submit", async function (event) {
 
             LastName: document.getElementById("LastName").value,
 
+            gender: document.getElementById("gender").value,
+
+            term: document.getElementById("term").value,
+
             section: document.getElementById("section").value,
 
             birthday: document.getElementById("birthday").value,

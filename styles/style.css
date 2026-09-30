@@ -172,3 +172,12 @@ footer {
     cursor: pointer;
     box-shadow: 0 10px 20px rgba(29, 78, 216, 0.18);
 }
+select {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font-size: 1rem;
+    color: var(--text);
+    background: #fff;
+}   
