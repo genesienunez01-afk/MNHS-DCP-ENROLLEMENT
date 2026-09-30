@@ -1,7 +1,7 @@
 :root {
     --primary: #1d4ed8;
-    --primary-dark: #123b9a;
-    --secondary: #10b981;
+    --primary-dark: #0f8b2c;
+    --secondary: #1b5283;
     --bg: #edf5ff;
     --card: #ffffff;
     --text: #1f2937;
@@ -65,6 +65,9 @@ header {
     align-items: center;
     justify-content: center;
     margin-right: 1rem;
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
 }
 #logo img {
     width: 100px;
@@ -78,7 +81,7 @@ header {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 100%;
+    width: 90%;
         
 
 }
