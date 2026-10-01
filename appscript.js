@@ -1,112 +1,245 @@
+// ===============================
+// CONFIGURATION
+// ===============================
+
+// Google Sheet tab name
 const SHEET_NAME = "Enrollments";
 
 // Google Drive folder ID
-const FOLDER_ID = "1Kr5dRFU9uzpR8fisa2aO5cBo_h0qFDYb";
+const FOLDER_ID = "YOUR_GOOGLE_DRIVE_FOLDER_ID";
 
+
+// ===============================
+// POST REQUEST
+// ===============================
 
 function doPost(e) {
 
   try {
+
+    // Check if data was received
     if (!e || !e.postData || !e.postData.contents) {
-      throw new Error("No data received.");
+      return jsonResponse(false, "No data received.");
     }
 
+    // Parse JSON
     const data = JSON.parse(e.postData.contents);
-    const getValue = function (keys) {
-      for (let i = 0; i < keys.length; i += 1) {
-        const key = keys[i];
-        const value = data[key];
-        if (value !== undefined && value !== null && String(value).trim() !== "") {
-          return value;
-        }
-      }
-      return "";
-    };
 
-    const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
-    const sheet = spreadsheet.getSheetByName(SHEET_NAME);
+
+    // ===============================
+    // VALIDATE REQUIRED DATA
+    // ===============================
+
+    if (!data.LRN) {
+      return jsonResponse(false, "LRN is required.");
+    }
+
+    if (!data.FirstName) {
+      return jsonResponse(false, "First Name is required.");
+    }
+
+    if (!data.LastName) {
+      return jsonResponse(false, "Last Name is required.");
+    }
+
+    if (!data.picture) {
+      return jsonResponse(false, "Picture is required.");
+    }
+
+
+    // ===============================
+    // OPEN GOOGLE SHEET
+    // ===============================
+
+    const sheet =
+      SpreadsheetApp.getActiveSpreadsheet()
+        .getSheetByName(SHEET_NAME);
+
 
     if (!sheet) {
-      throw new Error("Sheet '" + SHEET_NAME + "' was not found.");
+      return jsonResponse(
+        false,
+        "Sheet '" + SHEET_NAME + "' was not found."
+      );
     }
 
-    const lrn = String(getValue(["LRN", "lrn"]) || "").trim();
-    const firstName = String(getValue(["FirstName", "firstName", "first_name"]) || "").trim();
-    const lastName = String(getValue(["LastName", "lastName", "last_name"]) || "").trim();
-    const classCode = String(getValue(["Classcode", "classCode", "classcode"]) || "").trim();
 
-    if (!lrn) {
-      throw new Error("LRN is required.");
-    }
+    // ===============================
+    // CHECK DUPLICATE LRN
+    // ===============================
 
-    if (!firstName) {
-      throw new Error("First Name is required.");
-    }
+    const lastRow = sheet.getLastRow();
 
-    if (!lastName) {
-      throw new Error("Last Name is required.");
-    }
+    if (lastRow > 1) {
 
-    let pictureUrl = "";
-    let pictureName = "";
+      const lrnValues =
+        sheet
+          .getRange(2, 1, lastRow - 1, 1)
+          .getValues();
 
-    if (data.picture) {
-      const base64Data = String(data.picture).split(",")[1];
+      for (let i = 0; i < lrnValues.length; i++) {
 
-      if (!base64Data) {
-        throw new Error("Invalid picture data.");
+        const existingLRN =
+          String(lrnValues[i][0]).trim();
+
+        if (
+          existingLRN ===
+          String(data.LRN).trim()
+        ) {
+
+          return jsonResponse(
+            false,
+            "This LRN is already registered."
+          );
+
+        }
+
       }
 
-      const decodedData = Utilities.base64Decode(base64Data);
-      const blob = Utilities.newBlob(
-        decodedData,
+    }
+
+
+    // ===============================
+    // UPLOAD PICTURE
+    // ===============================
+
+    const folder =
+      DriveApp.getFolderById(FOLDER_ID);
+
+
+    // Remove Base64 header
+    const base64Data =
+      data.picture.split(",")[1];
+
+
+    if (!base64Data) {
+      return jsonResponse(
+        false,
+        "Invalid picture data."
+      );
+    }
+
+
+    // Convert Base64 to Blob
+    const decoded =
+      Utilities.base64Decode(base64Data);
+
+
+    const blob =
+      Utilities.newBlob(
+        decoded,
         data.pictureType || "image/jpeg",
         data.pictureName || "student_picture.jpg"
       );
 
-      const folder = DriveApp.getFolderById(FOLDER_ID);
-      const timestamp = new Date().getTime();
 
-      pictureName = timestamp + "_" + (data.pictureName || "student_picture.jpg");
-      blob.setName(pictureName);
+    // Create unique filename
+    const timestamp =
+      Utilities.formatDate(
+        new Date(),
+        Session.getScriptTimeZone(),
+        "yyyyMMdd_HHmmss"
+      );
 
-      const file = folder.createFile(blob);
-      pictureUrl = file.getUrl();
-    }
+
+    const fileName =
+      data.LRN +
+      "_" +
+      data.LastName +
+      "_" +
+      timestamp +
+      "_" +
+      (data.pictureName || "picture.jpg");
+
+
+    blob.setName(fileName);
+
+
+    // Upload to Google Drive
+    const file =
+      folder.createFile(blob);
+
+
+    // Picture URL
+    const pictureURL =
+      file.getUrl();
+
+
+    // ===============================
+    // SAVE TO GOOGLE SHEET
+    // ===============================
 
     sheet.appendRow([
-      new Date(),
-      lrn,
-      firstName,
-      getValue(["MiddleName", "middleName", "middle_name"]) || "",
-      lastName,
-      getValue(["gender"]) || "",
-      getValue(["term"]) || "",
-      classCode,
-      getValue(["section"]) || "",
-      getValue(["birthday"]) || "",
-      getValue(["adviser"]) || "",
-      pictureName,
-      pictureUrl
+
+      data.LRN,
+
+      data.FirstName,
+
+      data.MiddleName,
+
+      data.LastName,
+
+      data.gender,
+
+      data.term,
+
+      data.Classcode,
+
+      data.section,
+
+      data.birthday,
+
+      data.adviser,
+
+      pictureURL,
+
+      new Date()
+
     ]);
 
-    return ContentService
-      .createTextOutput(
-        JSON.stringify({
-          success: true,
-          message: "Enrollment submitted successfully!"
-        })
-      )
-      .setMimeType(ContentService.MimeType.JSON);
+
+    // ===============================
+    // SUCCESS RESPONSE
+    // ===============================
+
+    return jsonResponse(
+      true,
+      "Enrollment submitted successfully!"
+    );
+
 
   } catch (error) {
-    return ContentService
-      .createTextOutput(
-        JSON.stringify({
-          success: false,
-          message: error.message
-        })
-      )
-      .setMimeType(ContentService.MimeType.JSON);
+
+    console.error(error);
+
+    return jsonResponse(
+      false,
+      error.message
+    );
+
   }
+
+}
+
+
+// ===============================
+// JSON RESPONSE
+// ===============================
+
+function jsonResponse(success, message) {
+
+  return ContentService
+    .createTextOutput(
+      JSON.stringify({
+
+        success: success,
+
+        message: message
+
+      })
+    )
+    .setMimeType(
+      ContentService.MimeType.JSON
+    );
+
 }
