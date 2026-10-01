@@ -54,6 +54,8 @@ form.addEventListener("submit", async function (event) {
 
             term: document.getElementById("term").value,
 
+            Classcode: document.getElementById("Classcode").value,
+
             section: document.getElementById("section").value,
 
             birthday: document.getElementById("birthday").value,

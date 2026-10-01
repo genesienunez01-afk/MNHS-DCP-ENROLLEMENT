@@ -120,6 +120,8 @@ function doPost(e) {
 
       data.term || "",
 
+      data.Classcode || "",
+
       data.section || "",
 
       data.birthday || "",
