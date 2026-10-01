@@ -63,7 +63,7 @@ form.addEventListener("submit", async function (event) {
             adviser: document.getElementById("adviser").value
 
         };
-
+        console.log("Data to send:", data);
 
         // Send data to Google Apps Script
         const response = await fetch(SCRIPT_URL, {
