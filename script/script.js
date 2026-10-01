@@ -6,105 +6,87 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyBPdH4AX3ZkGRgCu6VD
 const getFieldValue = (id) => (document.getElementById(id)?.value ?? "").trim();
 
 if (form) {
-    form.addEventListener("submit", async function (event) {
+    form.addEventListener("submit", handleSubmit);
+}
 
-        event.preventDefault();
+async function handleSubmit(event) {
+    event.preventDefault();
 
-        const submitButton = form.querySelector('input[type="submit"]');
+    const submitButton = form.querySelector('input[type="submit"]');
+    setSubmitting(submitButton, true);
+    setMessage("Uploading your enrollment...");
 
-        submitButton.disabled = true;
-        submitButton.value = "Submitting...";
+    try {
+        const pictureInput = document.getElementById("picture");
+        const picture = pictureInput?.files?.[0];
 
-        message.textContent = "Uploading your enrollment...";
-
-        try {
-
-            const pictureInput = document.getElementById("picture");
-
-            if (!pictureInput || pictureInput.files.length === 0) {
-                throw new Error("Please select a picture.");
-            }
-
-            const picture = pictureInput.files[0];
-            const base64Picture = await fileToBase64(picture);
-            const classCodeValue = getFieldValue("Classcode");
-
-        const data = {
-
-    picture: base64Picture,
-
-    pictureName: picture.name,
-
-    pictureType: picture.type,
-
-    LRN: document.getElementById("LRN").value.trim(),
-
-    FirstName: document.getElementById("FirstName").value.trim(),
-
-    MiddleName: document.getElementById("MiddleName").value.trim(),
-
-    LastName: document.getElementById("LastName").value.trim(),
-
-    gender: document.getElementById("gender").value,
-
-    term: document.getElementById("term").value,
-
-    Classcode: document.getElementById("Classcode").value.trim(),
-
-    section: document.getElementById("section").value.trim(),
-
-    birthday: document.getElementById("birthday").value,
-
-    adviser: document.getElementById("adviser").value.trim()
-
-};
-
-console.log("Selected Class Code:", data.Classcode);
-console.log("Complete Data:", data);
-            console.log("Data to send:", data);
-
-            const response = await fetch(SCRIPT_URL, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "text/plain;charset=utf-8"
-                },
-                body: JSON.stringify(data)
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                message.textContent = "Enrollment submitted successfully!";
-                form.reset();
-            } else {
-                throw new Error(result.message || "Submission failed.");
-            }
+        if (!picture) {
+            throw new Error("Please select a picture.");
         }
-        catch (error) {
-            console.error(error);
-            message.textContent = "Error: " + (error.message || "Unknown error");
+
+        const data = await createEnrollmentData(picture);
+        const response = await fetch(SCRIPT_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "text/plain;charset=utf-8"
+            },
+            body: JSON.stringify(data)
+        });
+        const result = await response.json();
+
+        if (!result.success) {
+            throw new Error(result.message || "Submission failed.");
         }
-        finally {
-            if (submitButton) {
-                submitButton.disabled = false;
-                submitButton.value = "Submit";
-            }
-        }
-    });
+
+        setMessage("Enrollment submitted successfully!");
+        form.reset();
+    } catch (error) {
+        console.error(error);
+        setMessage(`Error: ${error.message || "Unknown error"}`);
+    } finally {
+        setSubmitting(submitButton, false);
+    }
+}
+
+async function createEnrollmentData(picture) {
+    return {
+        picture: await fileToBase64(picture),
+        pictureName: picture.name,
+        pictureType: picture.type,
+        LRN: getFieldValue("LRN"),
+        FirstName: getFieldValue("FirstName"),
+        MiddleName: getFieldValue("MiddleName"),
+        LastName: getFieldValue("LastName"),
+        gender: getFieldValue("gender"),
+        term: getFieldValue("term"),
+        Classcode: getFieldValue("Classcode"),
+        section: getFieldValue("section"),
+        birthday: getFieldValue("birthday"),
+        adviser: getFieldValue("adviser")
+    };
+}
+
+function setSubmitting(button, isSubmitting) {
+    if (!button) {
+        return;
+    }
+
+    button.disabled = isSubmitting;
+    button.value = isSubmitting ? "Submitting..." : "Submit";
+}
+
+function setMessage(text) {
+    if (message) {
+        message.textContent = text;
+    }
 }
 
 function fileToBase64(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
 
-        reader.onload = function () {
-            resolve(reader.result);
-        };
-
-        reader.onerror = function (error) {
-            reject(error);
-        };
-
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(reader.error || new Error("Could not read the selected picture."));
         reader.readAsDataURL(file);
     });
 }
