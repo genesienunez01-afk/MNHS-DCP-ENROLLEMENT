@@ -181,7 +181,35 @@ footer {
 
 @media (max-width: 640px) {
     header {
-        padding: 1.5rem 1rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: center;
+        gap: 0.75rem 0.5rem;
+        padding: 1.25rem 0.85rem;
+    }
+
+    header > #logo {
+        margin-right: 0;
+    }
+
+    header > #logo img {
+        width: 64px;
+        height: 64px;
+    }
+
+    header > #title {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        width: 100%;
+    }
+
+    header h1 {
+        font-size: 1.3rem;
+        line-height: 1.25;
+    }
+
+    header h1 + h1 {
+        font-size: 1.05rem;
     }
 
     main {
