@@ -3,7 +3,6 @@ const message = document.getElementById("message");
 
 // PUT YOUR GOOGLE APPS SCRIPT WEB APP URL HERE
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxXmceqNnJqooVyrrd9QjSePYkqEaBM1L1YgsPpE_GRggaFR8hrmNQdbne41UdgIo_DA/exec";
-
 const getFieldValue = (id) => (document.getElementById(id)?.value ?? "").trim();
 
 if (form) {
