@@ -1,0 +1,14 @@
+sheet.appendRow([
+  data.LRN || "",
+  data.FirstName || "",
+  data.MiddleName || "",
+  data.LastName || "",
+  data.gender || "",
+  data.term || "",
+  data.Classcode || "",
+  data.section || "",
+  data.birthday || "",
+  data.adviser || "",
+  pictureURL || "",
+  new Date()
+]);
