@@ -1,14 +1,311 @@
-sheet.appendRow([
-  data.LRN || "",
-  data.FirstName || "",
-  data.MiddleName || "",
-  data.LastName || "",
-  data.gender || "",
-  data.term || "",
-  data.Classcode || "",
-  data.section || "",
-  data.birthday || "",
-  data.adviser || "",
-  pictureURL || "",
-  new Date()
-]);
+// ===============================
+// CONFIGURATION
+// ===============================
+
+// Google Sheet tab name
+const SHEET_NAME = "Enrollments";
+
+// Google Drive folder ID
+const FOLDER_ID = "1bgXfpqs73jZ_vRSaD0LAx0Q14HFS2YdR";
+
+
+
+
+function doPost(e) {
+
+  try {
+
+    if (!e || !e.postData || !e.postData.contents) {
+      return jsonResponse(false, "No data received.");
+    }
+
+    const data = JSON.parse(e.postData.contents);
+
+    const sheet = SpreadsheetApp
+      .getActiveSpreadsheet()
+      .getSheetByName(SHEET_NAME);
+
+    if (!sheet) {
+      return jsonResponse(
+        false,
+        "Sheet '" + SHEET_NAME + "' not found."
+      );
+    }
+
+
+    // =========================
+    // REQUIRED DATA
+    // =========================
+
+    if (!data.LRN) {
+      return jsonResponse(false, "LRN is required.");
+    }
+
+    if (!data.FirstName) {
+      return jsonResponse(false, "First Name is required.");
+    }
+
+    if (!data.LastName) {
+      return jsonResponse(false, "Last Name is required.");
+    }
+
+
+    // =========================
+    // CHECK DUPLICATE LRN
+    // =========================
+
+    const lastRow = sheet.getLastRow();
+
+    if (lastRow > 1) {
+
+      const headers = sheet
+        .getRange(1, 1, 1, sheet.getLastColumn())
+        .getValues()[0];
+
+      const lrnColumn = headers.indexOf("LRN") + 1;
+
+      if (lrnColumn > 0) {
+
+        const existingLRNs = sheet
+          .getRange(2, lrnColumn, lastRow - 1, 1)
+          .getValues();
+
+        for (let i = 0; i < existingLRNs.length; i++) {
+
+          if (
+            String(existingLRNs[i][0]).trim() ===
+            String(data.LRN).trim()
+          ) {
+
+            return jsonResponse(
+              false,
+              "This LRN is already registered."
+            );
+
+          }
+
+        }
+
+      }
+
+    }
+
+
+    // =========================
+    // UPLOAD PICTURE
+    // =========================
+
+    let pictureURL = "";
+
+    if (data.picture) {
+
+      const folder = DriveApp.getFolderById(FOLDER_ID);
+
+      const base64Data = data.picture.split(",")[1];
+
+      if (!base64Data) {
+        return jsonResponse(
+          false,
+          "Invalid picture data."
+        );
+      }
+
+      const decoded =
+        Utilities.base64Decode(base64Data);
+
+      const blob = Utilities.newBlob(
+        decoded,
+        data.pictureType || "image/jpeg",
+        data.pictureName || "picture.jpg"
+      );
+
+      const timestamp = Utilities.formatDate(
+        new Date(),
+        Session.getScriptTimeZone(),
+        "yyyyMMdd_HHmmss"
+      );
+
+      const fileName =
+        data.LRN +
+        "_" +
+        data.LastName +
+        "_" +
+        timestamp +
+        "_" +
+        (data.pictureName || "picture.jpg");
+
+      blob.setName(fileName);
+
+      const file = folder.createFile(blob);
+
+      pictureURL = file.getUrl();
+    }
+
+
+    // =========================
+    // GET HEADERS
+    // =========================
+
+    const headers = sheet
+      .getRange(1, 1, 1, sheet.getLastColumn())
+      .getValues()[0];
+
+
+    // =========================
+    // CREATE NEW ROW
+    // =========================
+
+    const row = new Array(headers.length).fill("");
+
+
+    // =========================
+    // PUT DATA INTO CORRECT
+    // COLUMN BY HEADER
+    // =========================
+
+    setColumnValue(row, headers, "LRN", data.LRN);
+
+    setColumnValue(
+      row,
+      headers,
+      "FirstName",
+      data.FirstName
+    );
+
+    setColumnValue(
+      row,
+      headers,
+      "MiddleName",
+      data.MiddleName
+    );
+
+    setColumnValue(
+      row,
+      headers,
+      "LastName",
+      data.LastName
+    );
+
+    setColumnValue(
+      row,
+      headers,
+      "gender",
+      data.gender
+    );
+
+    setColumnValue(
+      row,
+      headers,
+      "term",
+      data.term
+    );
+
+    setColumnValue(
+      row,
+      headers,
+      "Classcode",
+      data.Classcode
+    );
+
+    setColumnValue(
+      row,
+      headers,
+      "section",
+      data.section
+    );
+
+    setColumnValue(
+      row,
+      headers,
+      "birthday",
+      data.birthday
+    );
+
+    setColumnValue(
+      row,
+      headers,
+      "adviser",
+      data.adviser
+    );
+
+    setColumnValue(
+      row,
+      headers,
+      "PictureURL",
+      pictureURL
+    );
+
+    setColumnValue(
+      row,
+      headers,
+      "Timestamp",
+      new Date()
+    );
+
+
+    // =========================
+    // SAVE ROW
+    // =========================
+
+    sheet.appendRow(row);
+
+
+    return jsonResponse(
+      true,
+      "Enrollment submitted successfully!"
+    );
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    return jsonResponse(
+      false,
+      error.message
+    );
+
+  }
+
+}
+
+
+// ======================================
+// SET VALUE BASED ON HEADER NAME
+// ======================================
+
+function setColumnValue(
+  row,
+  headers,
+  columnName,
+  value
+) {
+
+  const index =
+    headers.indexOf(columnName);
+
+  if (index !== -1) {
+    row[index] = value || "";
+  }
+
+}
+
+
+// ======================================
+// JSON RESPONSE
+// ======================================
+
+function jsonResponse(success, message) {
+
+  return ContentService
+    .createTextOutput(
+      JSON.stringify({
+        success: success,
+        message: message
+      })
+    )
+    .setMimeType(
+      ContentService.MimeType.JSON
+    );
+
+}
