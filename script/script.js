@@ -44,13 +44,11 @@ async function handleSubmit(event) {
             LastName: document.getElementById("LastName").value.trim(),
             gender: document.getElementById("gender").value,
             term: document.getElementById("term").value,
-            Classcode: document.getElementById("Classcode").value.trim(),
             section: document.getElementById("section").value.trim(),
             birthday: document.getElementById("birthday").value,
             adviser: document.getElementById("adviser").value.trim()
         };
 
-        console.log("Selected Class Code:", data.Classcode);
         console.log("Data to send:", data);
 
         const response = await fetch(SCRIPT_URL, {
