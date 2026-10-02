@@ -1,26 +1,51 @@
 const form = document.getElementById("enrollmentForm");
 const message = document.getElementById("message");
 const toast = document.getElementById("toast");
+const confirmModal = document.getElementById("confirmModal");
+const cancelSubmit = document.getElementById("cancelSubmit");
+const confirmSubmit = document.getElementById("confirmSubmit");
 
 // PUT YOUR GOOGLE APPS SCRIPT WEB APP URL HERE
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz30FUPh4qJuP130Bx7BZT4Z-DDJdApvX9TrNUfb4UMmjF2B8-nZN04WnTK5dPp4FHdQg/exec";
 
 const submitButton = document.querySelector(".submit-btn");
 
-form.addEventListener("submit", async function (e) {
+form.addEventListener("submit", function (e) {
     e.preventDefault();
 
-    if (submitButton) {
-        submitButton.disabled = true;
-        submitButton.value = "Submitting...";
-        submitButton.style.opacity = "0.7";
-        submitButton.style.cursor = "wait";
+    if (confirmModal) {
+        confirmModal.classList.remove("hidden");
+        confirmModal.setAttribute("aria-hidden", "false");
     }
+});
 
-    message.textContent = "Submitting...";
-    message.style.color = "blue";
+if (cancelSubmit) {
+    cancelSubmit.addEventListener("click", function () {
+        if (confirmModal) {
+            confirmModal.classList.add("hidden");
+            confirmModal.setAttribute("aria-hidden", "true");
+        }
+    });
+}
 
-    try {
+if (confirmSubmit) {
+    confirmSubmit.addEventListener("click", async function () {
+        if (confirmModal) {
+            confirmModal.classList.add("hidden");
+            confirmModal.setAttribute("aria-hidden", "true");
+        }
+
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.value = "Submitting...";
+            submitButton.style.opacity = "0.7";
+            submitButton.style.cursor = "wait";
+        }
+
+        message.textContent = "Submitting...";
+        message.style.color = "blue";
+
+        try {
         // Get form values
         const picture = document.getElementById("picture").files[0];
         const term = document.getElementById("term").value;
@@ -89,20 +114,21 @@ form.addEventListener("submit", async function (e) {
             message.style.color = "red";
         }
 
-    } catch (error) {
-        console.error("Error:", error);
+        } catch (error) {
+            console.error("Error:", error);
 
-        message.textContent = "An error occurred while submitting.";
-        message.style.color = "red";
-    } finally {
-        if (submitButton) {
-            submitButton.disabled = false;
-            submitButton.value = "Submit";
-            submitButton.style.opacity = "1";
-            submitButton.style.cursor = "pointer";
+            message.textContent = "An error occurred while submitting.";
+            message.style.color = "red";
+        } finally {
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.value = "Submit";
+                submitButton.style.opacity = "1";
+                submitButton.style.cursor = "pointer";
+            }
         }
-    }
-});
+    });
+}
 
 
 function showToast(messageText) {
