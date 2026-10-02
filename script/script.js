@@ -58,6 +58,11 @@ pictureInput.addEventListener("change", function () {
 form.addEventListener("submit", function (e) {
     e.preventDefault();
 
+    if (!pictureInput.files || !pictureInput.files[0]) {
+        showToast("Please select a photo before submitting.", "warning");
+        return;
+    }
+
     if (confirmModal) {
         confirmModal.classList.remove("hidden");
         confirmModal.setAttribute("aria-hidden", "false");
@@ -155,6 +160,12 @@ if (confirmSubmit) {
             if (pictureInput) {
                 pictureInput.value = "";
             }
+            if (imagePreview) {
+                imagePreview.src = "";
+            }
+            if (imagePreviewWrap) {
+                imagePreviewWrap.classList.add("hidden");
+            }
         } else {
             message.textContent = result.message || "Submission failed.";
             message.style.color = "red";
@@ -177,10 +188,11 @@ if (confirmSubmit) {
 }
 
 
-function showToast(messageText) {
+function showToast(messageText, type = "success") {
     if (!toast) return;
 
     toast.textContent = messageText;
+    toast.classList.toggle("warning", type === "warning");
     toast.classList.add("show");
 
     clearTimeout(showToast.timeoutId);
