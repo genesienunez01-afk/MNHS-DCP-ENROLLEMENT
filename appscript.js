@@ -124,33 +124,21 @@ function doPost(e) {
     const decoded =
       Utilities.base64Decode(base64Data);
 
+    const fileName =
+      data.pictureName ||
+      [
+        data.LRN || "student",
+        data.LastName || "lastname",
+        data.FirstName || "firstname",
+        "picture.jpg"
+      ].join("_");
 
     const blob =
       Utilities.newBlob(
         decoded,
         data.pictureType || "image/jpeg",
-        data.pictureName || "student_picture.jpg"
+        fileName
       );
-
-
-    // Create unique filename
-    const timestamp =
-      Utilities.formatDate(
-        new Date(),
-        Session.getScriptTimeZone(),
-        "yyyyMMdd_HHmmss"
-      );
-
-
-    const fileName =
-      data.LRN +
-      "_" +
-      data.LastName +
-      "_" +
-      timestamp +
-      "_" +
-      (data.pictureName || "picture.jpg");
-
 
     blob.setName(fileName);
 

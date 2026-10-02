@@ -74,13 +74,13 @@ if (confirmSubmit) {
         const picture = document.getElementById("picture").files[0];
         const term = document.getElementById("term").value;
         const LRN = document.getElementById("LRN").value;
-        const FirstName = document.getElementById("FirstName").value;
+        const FirstName = document.getElementById("FirstName").value.trim();
         const MiddleName = document.getElementById("MiddleName").value;
-        const LastName = document.getElementById("LastName").value;
+        const LastName = document.getElementById("LastName").value.trim();
         const gender = document.getElementById("gender").value;
         const birthday = document.getElementById("birthday").value;
         const Classcode = document.getElementById("Classcode").value;
-        const section = document.getElementById("section").value;
+        const section = document.getElementById("section").value.trim();
         const adviser = document.getElementById("adviser").value;
 
         // Check if image was selected
@@ -92,11 +92,12 @@ if (confirmSubmit) {
 
         // Convert image to Base64
         const base64Picture = await fileToBase64(picture);
+        const studentFileName = buildStudentFileName(LastName, FirstName, section, picture.type);
 
         // Data to send to Google Apps Script
         const data = {
             picture: base64Picture,
-            pictureName: picture.name,
+            pictureName: studentFileName,
             pictureType: picture.type,
 
             term: term,
@@ -165,6 +166,24 @@ function showToast(messageText) {
     showToast.timeoutId = setTimeout(() => {
         toast.classList.remove("show");
     }, 2500);
+}
+
+function buildStudentFileName(lastName, firstName, section, fileType) {
+    const safeLastName = sanitizeName(lastName) || "lastname";
+    const safeFirstName = sanitizeName(firstName) || "firstname";
+    const safeSection = sanitizeName(section) || "section";
+    const extension = (fileType && fileType.includes("/")) ? fileType.split("/")[1] : "jpg";
+    const cleanExtension = extension.toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
+
+    return `${safeLastName}_${safeFirstName}_${safeSection}.${cleanExtension}`;
+}
+
+function sanitizeName(value) {
+    return String(value || "")
+        .trim()
+        .replace(/[^a-zA-Z0-9\s_-]/g, "")
+        .replace(/\s+/g, "_")
+        .replace(/_+/g, "_");
 }
 
 // Convert uploaded image to Base64
