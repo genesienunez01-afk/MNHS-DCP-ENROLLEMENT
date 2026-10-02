@@ -10,14 +10,27 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz30FUPh4qJuP130Bx7B
 
 const submitButton = document.querySelector(".submit-btn");
 const pictureInput = document.getElementById("picture");
+const galleryBtn = document.getElementById("galleryBtn");
 const cameraBtn = document.getElementById("cameraBtn");
 const imagePreview = document.getElementById("imagePreview");
 const imagePreviewWrap = document.getElementById("imagePreviewWrap");
 
+function openPhotoPicker(mode = "environment") {
+    if (!pictureInput) return;
+    pictureInput.setAttribute("capture", mode);
+    pictureInput.click();
+}
+
+if (galleryBtn && pictureInput) {
+    galleryBtn.addEventListener("click", function () {
+        pictureInput.removeAttribute("capture");
+        pictureInput.click();
+    });
+}
+
 if (cameraBtn && pictureInput) {
     cameraBtn.addEventListener("click", function () {
-        pictureInput.setAttribute("capture", "environment");
-        pictureInput.click();
+        openPhotoPicker("environment");
     });
 }
 

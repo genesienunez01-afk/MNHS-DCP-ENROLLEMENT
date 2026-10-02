@@ -144,26 +144,91 @@ form input[type="file"] {
     background: #f8fbff;
 }
 
-.upload-actions {
-    display: flex;
-    justify-content: center;
-}
-
-.camera-btn {
-    border: none;
-    border-radius: 10px;
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    color: #fff;
-    font-weight: 700;
-    padding: 0.7rem 1rem;
-    cursor: pointer;
-    box-shadow: 0 8px 18px rgba(29, 78, 216, 0.18);
+.file-input {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-height: 48px;
+    padding: 0.75rem 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: #f8fbff;
+    color: var(--text);
 }
 
 .file-upload-wrap {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+}
+
+.upload-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.upload-btn {
+    flex: 1 1 140px;
+    min-height: 46px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.upload-btn.primary {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: #fff;
+    box-shadow: 0 8px 18px rgba(29, 78, 216, 0.18);
+}
+
+.upload-btn.secondary {
+    background: #e5e7eb;
+    color: var(--text);
+}
+
+.upload-btn:hover {
+    transform: translateY(-1px);
+    opacity: 0.96;
+}
+
+.file-input::-webkit-file-upload-button {
+    display: none;
+}
+
+.file-input::before {
+    content: "Select Photo";
+    display: inline-block;
+    background: #eef4ff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.55rem 0.8rem;
+    margin-right: 0.5rem;
+    font-weight: 700;
+    color: var(--text);
+}
+
+@media (max-width: 640px) {
+    .file-upload-wrap {
+        gap: 0.65rem;
+    }
+
+    .upload-actions {
+        flex-direction: column;
+    }
+
+    .upload-btn {
+        width: 100%;
+        flex-basis: 100%;
+    }
+}
+
+.file-input.hidden {
+    display: none;
 }
 
 .image-preview-wrap {
