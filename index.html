@@ -28,7 +28,7 @@
     </header>
 
     <main>
-        
+        <div id="toast" class="toast" aria-live="polite"></div>
 
         <form id="enrollmentForm">
 
@@ -76,7 +76,13 @@
 
             <input type="date" id="birthday" name="birthday" required>
             <br>
-            <input type="text" id="Classcode" name="Classcode" placeholder="Class Code" required>
+            <select id="Classcode" name="Classcode" required>
+                <option value="">Select Class Code</option>
+                <option value="ICT/CSS A">ICT/CSS A</option>
+                <option value="ICT/CSS B">ICT/CSS B</option>
+                <option value="ICT/CSS C">ICT/CSS C</option>
+                <option value="ICT/CSS D">ICT/CSS D</option>
+            </select>
             <br>
 
             <input type="text" id="section" name="section" placeholder="Section" required>

@@ -1,11 +1,21 @@
 const form = document.getElementById("enrollmentForm");
 const message = document.getElementById("message");
+const toast = document.getElementById("toast");
 
 // PUT YOUR GOOGLE APPS SCRIPT WEB APP URL HERE
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz30FUPh4qJuP130Bx7BZT4Z-DDJdApvX9TrNUfb4UMmjF2B8-nZN04WnTK5dPp4FHdQg/exec";
 
+const submitButton = document.querySelector(".submit-btn");
+
 form.addEventListener("submit", async function (e) {
     e.preventDefault();
+
+    if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.value = "Submitting...";
+        submitButton.style.opacity = "0.7";
+        submitButton.style.cursor = "wait";
+    }
 
     message.textContent = "Submitting...";
     message.style.color = "blue";
@@ -66,9 +76,14 @@ form.addEventListener("submit", async function (e) {
         if (result.success) {
             message.textContent = "Enrollment submitted successfully!";
             message.style.color = "green";
+            showToast("Enrollment submitted successfully!");
 
-            // Clear the form
+            // Clear the form and file input
             form.reset();
+            const pictureInput = document.getElementById("picture");
+            if (pictureInput) {
+                pictureInput.value = "";
+            }
         } else {
             message.textContent = result.message || "Submission failed.";
             message.style.color = "red";
@@ -79,9 +94,28 @@ form.addEventListener("submit", async function (e) {
 
         message.textContent = "An error occurred while submitting.";
         message.style.color = "red";
+    } finally {
+        if (submitButton) {
+            submitButton.disabled = false;
+            submitButton.value = "Submit";
+            submitButton.style.opacity = "1";
+            submitButton.style.cursor = "pointer";
+        }
     }
 });
 
+
+function showToast(messageText) {
+    if (!toast) return;
+
+    toast.textContent = messageText;
+    toast.classList.add("show");
+
+    clearTimeout(showToast.timeoutId);
+    showToast.timeoutId = setTimeout(() => {
+        toast.classList.remove("show");
+    }, 2500);
+}
 
 // Convert uploaded image to Base64
 function fileToBase64(file) {

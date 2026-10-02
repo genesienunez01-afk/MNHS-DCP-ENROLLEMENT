@@ -232,6 +232,29 @@ footer {
         padding: 0.9rem;
     }
 }
+.toast {
+    position: fixed;
+    left: 50%;
+    bottom: 30px;
+    transform: translateX(-50%) translateY(20px);
+    opacity: 0;
+    pointer-events: none;
+    background: rgba(17, 24, 39, 0.92);
+    color: #fff;
+    padding: 0.8rem 1.2rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    font-size: 0.92rem;
+    font-weight: 600;
+    z-index: 1000;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
 #message {
     text-align: center;
     font-weight: 600;
