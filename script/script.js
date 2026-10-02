@@ -9,11 +9,18 @@ const confirmSubmit = document.getElementById("confirmSubmit");
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz30FUPh4qJuP130Bx7BZT4Z-DDJdApvX9TrNUfb4UMmjF2B8-nZN04WnTK5dPp4FHdQg/exec";
 
 const submitButton = document.querySelector(".submit-btn");
+const lrnInput = document.getElementById("LRN");
 const pictureInput = document.getElementById("picture");
 const galleryBtn = document.getElementById("galleryBtn");
 const cameraBtn = document.getElementById("cameraBtn");
 const imagePreview = document.getElementById("imagePreview");
 const imagePreviewWrap = document.getElementById("imagePreviewWrap");
+
+if (lrnInput) {
+    lrnInput.addEventListener("input", function () {
+        this.value = this.value.replace(/\D/g, "").slice(0, 12);
+    });
+}
 
 function openPhotoPicker(mode = "environment") {
     if (!pictureInput) return;
@@ -100,14 +107,14 @@ if (confirmSubmit) {
         const picture = document.getElementById("picture").files[0];
         const term = document.getElementById("term").value;
         const LRN = document.getElementById("LRN").value;
-        const FirstName = document.getElementById("FirstName").value.trim();
-        const MiddleName = document.getElementById("MiddleName").value;
-        const LastName = document.getElementById("LastName").value.trim();
+        const FirstName = toTitleCase(document.getElementById("FirstName").value);
+        const MiddleName = toTitleCase(document.getElementById("MiddleName").value);
+        const LastName = toTitleCase(document.getElementById("LastName").value);
         const gender = document.getElementById("gender").value;
         const birthday = document.getElementById("birthday").value;
         const Classcode = document.getElementById("Classcode").value;
-        const section = document.getElementById("section").value.trim();
-        const adviser = document.getElementById("adviser").value;
+        const section = toTitleCase(document.getElementById("section").value);
+        const adviser = toTitleCase(document.getElementById("adviser").value);
 
         // Check if image was selected
         if (!picture) {
@@ -199,6 +206,15 @@ function showToast(messageText, type = "success") {
     showToast.timeoutId = setTimeout(() => {
         toast.classList.remove("show");
     }, 2500);
+}
+
+function toTitleCase(value) {
+    return String(value ?? "")
+        .trim()
+        .toLowerCase()
+        .replace(/(^|[\s'’\-])(\p{L})/gu, function (match, separator, letter) {
+            return separator + letter.toUpperCase();
+        });
 }
 
 function buildStudentFileName(lastName, firstName, section, fileType) {
