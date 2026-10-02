@@ -9,6 +9,30 @@ const confirmSubmit = document.getElementById("confirmSubmit");
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz30FUPh4qJuP130Bx7BZT4Z-DDJdApvX9TrNUfb4UMmjF2B8-nZN04WnTK5dPp4FHdQg/exec";
 
 const submitButton = document.querySelector(".submit-btn");
+const pictureInput = document.getElementById("picture");
+const imagePreview = document.getElementById("imagePreview");
+const imagePreviewWrap = document.getElementById("imagePreviewWrap");
+
+pictureInput.addEventListener("change", function () {
+    const file = this.files && this.files[0];
+
+    if (!file) {
+        if (imagePreviewWrap) imagePreviewWrap.classList.add("hidden");
+        if (imagePreview) imagePreview.src = "";
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function (event) {
+        if (imagePreview) {
+            imagePreview.src = event.target.result;
+        }
+        if (imagePreviewWrap) {
+            imagePreviewWrap.classList.remove("hidden");
+        }
+    };
+    reader.readAsDataURL(file);
+});
 
 form.addEventListener("submit", function (e) {
     e.preventDefault();

@@ -45,7 +45,12 @@
 
 
 
-            <input type="file" id="picture" name="picture" accept="image/*" required>
+            <div class="file-upload-wrap">
+                <input type="file" id="picture" name="picture" accept="image/*" required>
+                <div id="imagePreviewWrap" class="image-preview-wrap hidden">
+                    <img id="imagePreview" src="" alt="Selected profile preview" />
+                </div>
+            </div>
             <!-- <div class="dropdown">
                 <button class="dropbtn">Term</button>
                 <div class="dropdown-content">
