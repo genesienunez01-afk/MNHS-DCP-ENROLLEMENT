@@ -65,6 +65,8 @@ pictureInput.addEventListener("change", function () {
 form.addEventListener("submit", function (e) {
     e.preventDefault();
 
+    if (!hasValidLrn()) return;
+
     if (!pictureInput.files || !pictureInput.files[0]) {
         showToast("Please select a photo before submitting.", "warning");
         return;
@@ -87,6 +89,8 @@ if (cancelSubmit) {
 
 if (confirmSubmit) {
     confirmSubmit.addEventListener("click", async function () {
+        if (!hasValidLrn()) return;
+
         if (confirmModal) {
             confirmModal.classList.add("hidden");
             confirmModal.setAttribute("aria-hidden", "true");
@@ -192,6 +196,16 @@ if (confirmSubmit) {
             }
         }
     });
+}
+
+function hasValidLrn() {
+    if (lrnInput && /^\d{12}$/.test(lrnInput.value)) {
+        return true;
+    }
+
+    showToast("LRN must contain exactly 12 digits.", "warning");
+    if (lrnInput) lrnInput.focus();
+    return false;
 }
 
 
