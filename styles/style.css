@@ -144,6 +144,22 @@ form input[type="file"] {
     background: #f8fbff;
 }
 
+.upload-actions {
+    display: flex;
+    justify-content: center;
+}
+
+.camera-btn {
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: #fff;
+    font-weight: 700;
+    padding: 0.7rem 1rem;
+    cursor: pointer;
+    box-shadow: 0 8px 18px rgba(29, 78, 216, 0.18);
+}
+
 .file-upload-wrap {
     display: flex;
     flex-direction: column;

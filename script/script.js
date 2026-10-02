@@ -10,8 +10,16 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz30FUPh4qJuP130Bx7B
 
 const submitButton = document.querySelector(".submit-btn");
 const pictureInput = document.getElementById("picture");
+const cameraBtn = document.getElementById("cameraBtn");
 const imagePreview = document.getElementById("imagePreview");
 const imagePreviewWrap = document.getElementById("imagePreviewWrap");
+
+if (cameraBtn && pictureInput) {
+    cameraBtn.addEventListener("click", function () {
+        pictureInput.setAttribute("capture", "environment");
+        pictureInput.click();
+    });
+}
 
 pictureInput.addEventListener("change", function () {
     const file = this.files && this.files[0];

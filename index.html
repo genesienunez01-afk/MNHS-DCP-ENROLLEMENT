@@ -46,7 +46,10 @@
 
 
             <div class="file-upload-wrap">
-                <input type="file" id="picture" name="picture" accept="image/*" required>
+                <input type="file" id="picture" name="picture" accept="image/*" capture="environment" required>
+                <div class="upload-actions">
+                    <button type="button" id="cameraBtn" class="camera-btn">Use Camera</button>
+                </div>
                 <div id="imagePreviewWrap" class="image-preview-wrap hidden">
                     <img id="imagePreview" src="" alt="Selected profile preview" />
                 </div>
@@ -97,7 +100,9 @@
                 <option value="ICT/CSS A">ICT/CSS A</option>
                 <option value="ICT/CSS B">ICT/CSS B</option>
                 <option value="ICT/CSS C">ICT/CSS C</option>
-                <option value="ICT/CSS D">ICT/CSS D</option>
+                <option value="ICT/CSS D">ICT/CSS D</option>    
+                <option value="ICT/CSS E">ICT/CSS E</option>
+                <option value="ICT/CSS F">ICT/CSS F</option>
             </select>
             <br>
 
