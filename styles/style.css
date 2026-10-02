@@ -234,13 +234,14 @@ footer {
 }
 .toast {
     position: fixed;
+    top: 50%;
     left: 50%;
-    bottom: 30px;
-    transform: translateX(-50%) translateY(20px);
+    transform: translate(-50%, -50%) scale(0.96);
     opacity: 0;
     pointer-events: none;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 0.75rem;
     min-width: min(92vw, 360px);
     background: rgba(15, 23, 42, 0.92);
@@ -273,7 +274,7 @@ footer {
 
 .toast.show {
     opacity: 1;
-    transform: translateX(-50%) translateY(0);
+    transform: translate(-50%, -50%) scale(1);
 }
 
 .modal {
