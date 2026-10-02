@@ -332,6 +332,18 @@ footer a {
     text-underline-offset: 0.2em;
 }
 
+.footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.25rem 1.1rem;
+    margin-top: 0.4rem;
+}
+
+.footer-links a {
+    margin-top: 0;
+}
+
 .legal-main {
     width: 100%;
 }
@@ -366,6 +378,21 @@ footer a {
     padding-left: 1.35rem;
 }
 
+.system-details {
+    display: grid;
+    grid-template-columns: minmax(120px, 0.35fr) minmax(0, 1fr);
+    gap: 0.45rem 1rem;
+    margin-bottom: 0.8rem;
+}
+
+.system-details dt {
+    font-weight: 700;
+}
+
+.system-details dd {
+    overflow-wrap: anywhere;
+}
+
 .legal-document section + section {
     margin-top: 2rem;
     padding-top: 1.5rem;
@@ -378,6 +405,17 @@ footer a {
     color: var(--secondary);
     font-weight: 700;
     text-underline-offset: 0.2em;
+}
+
+@media (max-width: 480px) {
+    .system-details {
+        grid-template-columns: 1fr;
+        gap: 0.1rem;
+    }
+
+    .system-details dd {
+        margin-bottom: 0.45rem;
+    }
 }
 
 @media (max-width: 640px) {
