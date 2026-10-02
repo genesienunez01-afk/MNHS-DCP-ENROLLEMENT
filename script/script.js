@@ -1,9 +1,8 @@
 const form = document.getElementById("enrollmentForm");
 const message = document.getElementById("message");
 
-// PUT YOUR GOOGLE APPS SCRIPT WEB APP URL HERE
+// Google Apps Script Web App URL
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyBPdH4AX3ZkGRgCu6VD_NOK2NqxEu_Pu2EuaxPSSWkOkadjSZUZz-mrVyEJ7UrAaHk/exec";
-const getFieldValue = (id) => (document.getElementById(id)?.value ?? "").trim();
 
 if (form) {
     form.addEventListener("submit", async function (event) {
@@ -12,12 +11,18 @@ if (form) {
 
         const submitButton = form.querySelector('input[type="submit"]');
 
-        submitButton.disabled = true;
-        submitButton.value = "Submitting...";
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.value = "Submitting...";
+        }
 
         message.textContent = "Uploading your enrollment...";
 
         try {
+
+            // ===============================
+            // PICTURE
+            // ===============================
 
             const pictureInput = document.getElementById("picture");
 
@@ -26,75 +31,140 @@ if (form) {
             }
 
             const picture = pictureInput.files[0];
+
             const base64Picture = await fileToBase64(picture);
-            const classCodeValue = getFieldValue("Classcode");
 
-        const data = {
 
-    picture: base64Picture,
+            // ===============================
+            // FORM DATA
+            // ===============================
 
-    pictureName: picture.name,
+            const data = {
 
-    pictureType: picture.type,
+                picture: base64Picture,
 
-    LRN: document.getElementById("LRN").value.trim(),
+                pictureName: picture.name,
 
-    FirstName: document.getElementById("FirstName").value.trim(),
+                pictureType: picture.type,
 
-    MiddleName: document.getElementById("MiddleName").value.trim(),
+                LRN: document.getElementById("LRN").value.trim(),
 
-    LastName: document.getElementById("LastName").value.trim(),
+                FirstName: document.getElementById("FirstName").value.trim(),
 
-    gender: document.getElementById("gender").value,
+                MiddleName: document.getElementById("MiddleName").value.trim(),
 
-    term: document.getElementById("term").value,
+                LastName: document.getElementById("LastName").value.trim(),
 
-    Classcode: document.getElementById("Classcode").value.trim(),
+                gender: document.getElementById("gender").value,
 
-    section: document.getElementById("section").value.trim(),
+                term: document.getElementById("term").value,
 
-    birthday: document.getElementById("birthday").value,
+                section: document.getElementById("section").value.trim(),
 
-    adviser: document.getElementById("adviser").value.trim()
+                birthday: document.getElementById("birthday").value,
 
-};
+                adviser: document.getElementById("adviser").value.trim()
 
-console.log("Selected Class Code:", data.Classcode);
-console.log("Complete Data:", data);
-            console.log("Data to send:", data);
+            };
+
+
+            // ===============================
+            // VALIDATION
+            // ===============================
+
+            if (!data.LRN) {
+                throw new Error("LRN is required.");
+            }
+
+            if (!data.FirstName) {
+                throw new Error("First Name is required.");
+            }
+
+            if (!data.LastName) {
+                throw new Error("Last Name is required.");
+            }
+
+
+            // ===============================
+            // DEBUG
+            // ===============================
+
+            console.log("Enrollment Data:", data);
+
+
+            // ===============================
+            // SEND TO GOOGLE APPS SCRIPT
+            // ===============================
 
             const response = await fetch(SCRIPT_URL, {
+
                 method: "POST",
+
                 headers: {
                     "Content-Type": "text/plain;charset=utf-8"
                 },
+
                 body: JSON.stringify(data)
+
             });
+
+
+            // ===============================
+            // GET RESPONSE
+            // ===============================
 
             const result = await response.json();
 
+
             if (result.success) {
-                message.textContent = "Enrollment submitted successfully!";
+
+                message.textContent =
+                    "Enrollment submitted successfully!";
+
                 form.reset();
+
             } else {
-                throw new Error(result.message || "Submission failed.");
+
+                throw new Error(
+                    result.message || "Submission failed."
+                );
+
             }
-        }
-        catch (error) {
+
+
+        } catch (error) {
+
             console.error(error);
-            message.textContent = "Error: " + (error.message || "Unknown error");
-        }
-        finally {
+
+            message.textContent =
+                "Error: " +
+                (error.message || "Unknown error");
+
+        } finally {
+
             if (submitButton) {
+
                 submitButton.disabled = false;
+
                 submitButton.value = "Submit";
+
             }
+
         }
+
     });
+    console.log(data);
 }
 
+
+// ======================================
+// FILE TO BASE64
+// ======================================
+
 function fileToBase64(file) {
+
     return new Promise((resolve, reject) => {
+
         const reader = new FileReader();
 
         reader.onload = function () {
@@ -106,5 +176,7 @@ function fileToBase64(file) {
         };
 
         reader.readAsDataURL(file);
+
     });
+
 }
