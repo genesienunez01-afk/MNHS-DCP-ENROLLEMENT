@@ -1,6 +1,10 @@
 const form = document.getElementById("enrollmentForm");
 const message = document.getElementById("message");
 const toast = document.getElementById("toast");
+const confirmationPage = document.getElementById("confirmationPage");
+const confirmationMessage = document.getElementById("confirmationMessage");
+const confirmationTitle = document.getElementById("confirmationTitle");
+const newEnrollment = document.getElementById("newEnrollment");
 const confirmModal = document.getElementById("confirmModal");
 const cancelSubmit = document.getElementById("cancelSubmit");
 const confirmSubmit = document.getElementById("confirmSubmit");
@@ -105,6 +109,7 @@ if (confirmSubmit) {
 
         message.textContent = "Submitting...";
         message.style.color = "blue";
+        message.style.display = "block";
 
         try {
         // Get form values
@@ -161,9 +166,9 @@ if (confirmSubmit) {
         const result = await response.json();
 
         if (result.success) {
-            message.textContent = "Enrollment submitted successfully!";
-            message.style.color = "green";
-            showToast("Enrollment submitted successfully!");
+            if (confirmationMessage) {
+                confirmationMessage.textContent = result.message || "Your enrollment has been received.";
+            }
 
             // Clear the form and file input
             form.reset();
@@ -177,9 +182,18 @@ if (confirmSubmit) {
             if (imagePreviewWrap) {
                 imagePreviewWrap.classList.add("hidden");
             }
+            form.hidden = true;
+            message.style.display = "none";
+            if (confirmationPage) {
+                confirmationPage.classList.remove("hidden");
+            }
+            if (confirmationTitle) {
+                confirmationTitle.focus();
+            }
         } else {
             message.textContent = result.message || "Submission failed.";
             message.style.color = "red";
+            message.style.display = "block";
         }
 
         } catch (error) {
@@ -187,6 +201,7 @@ if (confirmSubmit) {
 
             message.textContent = "An error occurred while submitting.";
             message.style.color = "red";
+            message.style.display = "block";
         } finally {
             if (submitButton) {
                 submitButton.disabled = false;
@@ -195,6 +210,17 @@ if (confirmSubmit) {
                 submitButton.style.cursor = "pointer";
             }
         }
+    });
+}
+
+if (newEnrollment) {
+    newEnrollment.addEventListener("click", function () {
+        if (confirmationPage) {
+            confirmationPage.classList.add("hidden");
+        }
+        form.hidden = false;
+        message.textContent = "";
+        document.getElementById("term").focus();
     });
 }
 

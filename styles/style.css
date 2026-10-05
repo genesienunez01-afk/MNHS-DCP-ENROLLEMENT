@@ -118,6 +118,51 @@ form {
     box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
 }
 
+form[hidden],
+.confirmation-page.hidden {
+    display: none;
+}
+
+.confirmation-page {
+    width: min(100%, 540px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 2.5rem 1.5rem;
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+    text-align: center;
+}
+
+.confirmation-mark {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: #dcfce7;
+    color: #15803d;
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.confirmation-page h2 {
+    color: var(--text);
+    font-size: 1.5rem;
+}
+
+.confirmation-page p {
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+.confirmation-page .btn-confirm {
+    margin-top: 0.5rem;
+}
+
 form input[type="text"],
 form input[type="date"],
 form input[type="file"],
